@@ -1,0 +1,23 @@
+# .air.toml
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  cmd = "go build -o ./tmp/user-service-executable ./user-service && go build -o ./tmp/payment-service-executable ./payment-service"
+  # Don't specify the bin field if you want to run both commands
+  # bin = "./tmp/user-service-executable"
+  include_dir = ["user-service", "payment-service", "database", "gen"]
+  exclude_dir = ["tmp", "vendor"]
+  watch_dir = ["."]
+  watch_ext = ["go"]
+
+[log]
+  time = true
+
+[[cmd]]
+  cmd = "./tmp/user-service-executable"
+  restart = true
+
+[[cmd]]
+  cmd = "./tmp/payment-service-executable"
+  restart = true

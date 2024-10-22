@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package payment;
+
+option go_package = "/payment";  
+
+service PaymentService {
+    rpc ProcessPayment(PaymentRequest) returns (PaymentResponse);
+    rpc CheckBalance(BalanceRequest) returns (BalanceResponse);
+}
+
+message PaymentRequest {
+    int32 user_id = 1;
+    double amount = 2;
+}
+
+message PaymentResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+message BalanceRequest {
+    int32 user_id = 1;
+}
+
+message BalanceResponse {
+    double balance = 1;
+}

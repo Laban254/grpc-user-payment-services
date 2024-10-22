@@ -1,0 +1,34 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.out
+
+# Compiled Go binaries
+/tmp/*
+/tmp/**/*.exe
+/tmp/**/*.exe~
+/tmp/**/*.dll
+/tmp/**/*.so
+/tmp/**/*.dylib
+/tmp/**/*.out
+
+# Go module files
+go.mod
+go.sum
+
+# Temporary files
+tmp/
+*.log
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Generated files
+/gen/
