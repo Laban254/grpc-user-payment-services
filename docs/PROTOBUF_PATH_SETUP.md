@@ -30,3 +30,7 @@
       ```go
       pb "path/to/your/project/gen/payment"
       ```
+
+**go build**
+`go build -o ../tmp/payment-service-executable`
+`go build -o ../tmp/user-service-executable`
