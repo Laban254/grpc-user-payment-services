@@ -21,7 +21,7 @@ message CreateUserResponse {
 }
 
 message GetUserRequest {
-    int32 id = 1;  // Ensure this field is defined
+    int32 id = 1;  
 }
 
 message GetUserResponse {
