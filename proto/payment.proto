@@ -2,27 +2,32 @@ syntax = "proto3";
 
 package payment;
 
-option go_package = "/payment";  
+option go_package = "/payment";
 
+// PaymentService defines the payment processing and balance checking services
 service PaymentService {
     rpc ProcessPayment(PaymentRequest) returns (PaymentResponse);
     rpc CheckBalance(BalanceRequest) returns (BalanceResponse);
 }
 
+// PaymentRequest is the request message for processing a payment
 message PaymentRequest {
-    int32 user_id = 1;
-    double amount = 2;
+    int32 user_id = 1;      // ID of the user making the payment
+    double amount = 2;      // Amount to be processed
 }
 
+// PaymentResponse is the response message for processing a payment
 message PaymentResponse {
-    bool success = 1;
-    string message = 2;
+    bool success = 1;       // Indicates if the payment was successful
+    string message = 2;     // Message regarding the payment processing status
 }
 
+// BalanceRequest is the request message for checking a user's balance
 message BalanceRequest {
-    int32 user_id = 1;
+    int32 user_id = 1;      // ID of the user whose balance is to be checked
 }
 
+// BalanceResponse is the response message for checking a user's balance
 message BalanceResponse {
-    double balance = 1;
+    double balance = 1;     // The balance of the user
 }

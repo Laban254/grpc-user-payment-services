@@ -3,38 +3,35 @@ package main
 import (
     "context"
     "fmt"
+    "log"
+
     pb "grpc-user-payment-services/gen/payment"
-    "grpc-user-payment-services/database"
+    userpb "grpc-user-payment-services/gen/user"
+    "google.golang.org/grpc"
 )
 
 
-
-// ProcessPayment processes a payment request
 func (s *Server) ProcessPayment(ctx context.Context, req *pb.PaymentRequest) (*pb.PaymentResponse, error) {
-    var account struct {
-        Balance float64 `gorm:"column:balance"`
-    }
+    log.Printf("Received payment request for user ID: %d, amount: %f", req.UserId, req.Amount)
 
-    // Check user balance in PostgreSQL using GORM
-    if err := database.DB.Model(&account).Where("user_id = ?", req.UserId).First(&account).Error; err != nil {
+    conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure(), grpc.WithBlock())
+    if err != nil {
+        return nil, fmt.Errorf("failed to connect to user service: %v", err)
+    }
+    defer conn.Close()
+
+    userClient := userpb.NewUserServiceClient(conn)
+
+    userResp, err := userClient.GetUser(ctx, &userpb.GetUserRequest{Id: req.UserId})
+    if err != nil {
         return &pb.PaymentResponse{
             Success: false,
-            Message: "User not found",
+            Message: fmt.Sprintf("Error retrieving user: %v", err),
         }, nil
     }
 
-    if account.Balance < req.Amount {
-        return &pb.PaymentResponse{
-            Success: false,
-            Message: "Insufficient funds",
-        }, nil
-    }
-
-    // Deduct amount from balance
-    newBalance := account.Balance - req.Amount
-    if err := database.DB.Model(&account).Where("user_id = ?", req.UserId).Update("balance", newBalance).Error; err != nil {
-        return nil, fmt.Errorf("failed to update balance: %v", err)
-    }
+    log.Printf("Processing payment for user: %s", userResp.User.Email)
+    log.Printf("Processing payment of %f for user ID: %d", req.Amount, userResp.User.Id)
 
     return &pb.PaymentResponse{
         Success: true,
@@ -42,18 +39,25 @@ func (s *Server) ProcessPayment(ctx context.Context, req *pb.PaymentRequest) (*p
     }, nil
 }
 
-// CheckBalance retrieves the balance for a user
 func (s *Server) CheckBalance(ctx context.Context, req *pb.BalanceRequest) (*pb.BalanceResponse, error) {
-    var account struct {
-        Balance float64 `gorm:"column:balance"`
+    conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure(), grpc.WithBlock())
+    if err != nil {
+        return nil, fmt.Errorf("failed to connect to user service: %v", err)
     }
+    defer conn.Close()
 
-    // Retrieve user balance using GORM
-    if err := database.DB.Model(&account).Where("user_id = ?", req.UserId).First(&account).Error; err != nil {
+    userClient := userpb.NewUserServiceClient(conn)
+
+    userResp, err := userClient.GetUser(ctx, &userpb.GetUserRequest{Id: req.UserId})
+    if err != nil {
         return nil, fmt.Errorf("user not found: %v", err)
     }
 
+    log.Printf("Checking balance for user: %s", userResp.User.Email)
+
+    balance := 100.0
+
     return &pb.BalanceResponse{
-        Balance: account.Balance,
+        Balance: balance,
     }, nil
 }
