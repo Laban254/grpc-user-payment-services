@@ -16,17 +16,18 @@ type Server struct {
     pb.UnimplementedUserServiceServer
 }
 
-
 func main() {
-    database.ConnectDB() // Connect to the database
+    // Connect to the database
+    database.ConnectDB() 
 
+    // Set up listener for gRPC server
     listener, err := net.Listen("tcp", ":50051")
     if err != nil {
         log.Fatalf("Failed to listen: %v", err)
     }
 
     grpcServer := grpc.NewServer()
-    pb.RegisterUserServiceServer(grpcServer, &Server{}) // Use the exported Server type
+    pb.RegisterUserServiceServer(grpcServer, &Server{})
 	reflection.Register(grpcServer)
 
     log.Println("User Service is running on port 50051")
