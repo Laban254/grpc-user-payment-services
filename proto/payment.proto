@@ -6,6 +6,7 @@ option go_package = "/payment";
 
 service PaymentService {
     rpc ProcessPayment(PaymentRequest) returns (PaymentResponse);
+    rpc RefundTransaction(RefundRequest) returns (RefundResponse);
     rpc CheckBalance(BalanceRequest) returns (BalanceResponse);
 }
 
@@ -17,6 +18,15 @@ message PaymentRequest {
 message PaymentResponse {
     bool success = 1;      
     string message = 2;    
+}
+
+message RefundRequest {
+    int32 transaction_id = 1; 
+}
+
+message RefundResponse {
+    bool success = 1;
+    string message = 2;
 }
 
 message BalanceRequest {
