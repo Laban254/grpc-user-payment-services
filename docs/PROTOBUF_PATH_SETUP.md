@@ -1,36 +1,64 @@
-### Setting Up the Protobuf Path
+## 🚀 Setting Up the Protobuf Path
 
-1. **Install Protobuf and Go Plugins**:
-    ```bash
-    # Install protobuf compiler
-    brew install protobuf  # macOS
-    sudo apt install protobuf-compiler  # Ubuntu
+To set up Protobuf for your Go gRPC services, follow the steps below:
+
+### 1. 📦 Install Protobuf and Go Plugins
+
+Begin by installing the Protobuf compiler and the necessary Go plugins:
+
+```bash
+# Install the Protobuf compiler
+# For macOS
+brew install protobuf  
+# For Ubuntu
+sudo apt install protobuf-compiler  
+```
+# Install the Go plugins for Protobuf and gRPC
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest` 
+
+### 2. 📁 Create a Generated Code Directory
+
+Create a `gen` directory in your project to store the generated code:
+
+```bash
+mkdir gen
+```
+### 3. 🛠️ Generate Go Code
+
+Use the `protoc` command to generate Go code for your `.proto` files. Run the following commands for each file:
+
+```bash
+protoc --go_out=gen --go-grpc_out=gen proto/user.proto
+protoc --go_out=gen --go-grpc_out=gen proto/payment.proto` 
+```
+### 4. ✏️ Update Imports
+
+In your `main.go` files for both the User and Payment services, update the import paths to point to the generated code:
+
+-   **User Service** (`user-service/main.go`):
     
-    # Install Go plugins
-    go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+    ```go
+	pb "path/to/your/project/gen/user"` 
     ```
+-   **Payment Service** (`payment-service/main.go`):
+    
+    ```go
+    `pb "path/to/your/project/gen/payment"` 
+	```
+### 5. ⚙️ Build the Services
 
-2. **Create a Generated Code Directory**: Create a `gen` directory in your project.
+After generating the code and updating the imports, build the services using the following commands:
 
-3. **Generate Go Code**: Run the following for each `.proto` file:
-    ```bash
-    protoc --go_out=gen --go-grpc_out=gen proto/user.proto
-    protoc --go_out=gen --go-grpc_out=gen proto/payment.proto
-    ```
+```bash
+# Build the Payment Service
+go build -o ../tmp/payment-service-executable
+```
+# Build the User Service
+`go build -o ../tmp/user-service-executable` 
 
-4. **Update Imports**: In your `main.go` files, update the import paths:
+### 🔍 Additional Notes
 
-    - **User Service**:
-      ```go
-      pb "path/to/your/project/gen/user"
-      ```
-      
-    - **Payment Service**:
-      ```go
-      pb "path/to/your/project/gen/payment"
-      ```
-
-**go build**
-`go build -o ../tmp/payment-service-executable`
-`go build -o ../tmp/user-service-executable`
+-   Ensure that you have the correct path to your project in the import statements.
+-   The generated code will be placed in the `gen` directory. Verify that the files are created successfully.
+-   Consider adding the `gen` directory to your `.gitignore` file to avoid version control issues with generated code.
